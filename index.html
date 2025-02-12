@@ -50,6 +50,23 @@
             }
         }
 
+        .click-note {
+            position: fixed;
+            color: #ffffff;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 192, 203, 0.9);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
         .message {
             font-size: 1.4rem;
             color: #ffffff;
@@ -168,6 +185,7 @@
             display: flex;
             margin-left: auto;
             margin-right: auto;
+            visibility: hidden;
         }
 
         video {
@@ -181,11 +199,15 @@
 <body>
     <div class="container">
         <h1>Will You Be My Valentine? ❤️</h1>
+        <div id="click-note" class="click-note">💖 Click me for some magic! ✨</div>
         <p class="message">Here are all the reasons why you're the most amazing person ever...</p>
         <div class="buttons">
             <button id="yesBtn" class="yes" onclick="showVideo()">Yes! 💖</button>
             <button id="noBtn" class="no" onclick="shakeButton()">No</button>
         </div>
+        <audio id="bgMusic" preload="auto" loop>
+            <source src="romantic-audio.mp3" type="audio/mpeg" />
+        </audio>
         <div id="videoCollage" class="hidden">
             <video id="valentineVideo" controls>
                 <source src="your-video-collage.mp4" type="video/mp4">
@@ -194,13 +216,35 @@
     </div>
 
     <script>
+        document.getElementById('yesBtn').addEventListener('click', showVideo);
+
         function showVideo() {
             let videoCollage = document.getElementById('videoCollage');
             let video = document.getElementById('valentineVideo');
+
+            videoCollage.style.visibility = "visible";
             videoCollage.classList.add('fade-in');
+
             document.getElementById('bgMusic').pause();
-            video.play();
+
+            video.play().catch(error => console.log("Video playback failed:", error));
         }
+
+        function playMusic() {
+            let bgMusic = document.getElementById('bgMusic');
+            let clickNote = document.getElementById('click-note');
+
+            if (bgMusic.paused) {
+                bgMusic.play().catch(error => console.log("Autoplay failed:", error));
+            }
+
+            if (clickNote) {
+                clickNote.style.display = "none";
+            }
+        }
+
+        document.getElementById('click-note').addEventListener('click', playMusic, { once: true });
+
 
         function shakeButton() {
             let noBtn = document.getElementById('noBtn');
@@ -224,10 +268,6 @@
             }, 1000);
         });
     </script>
-
-    <audio id="bgMusic" preload="auto" autoplay loop>
-        <source src="romantic-audio.mp3" type="audio/mpeg">
-    </audio>
 </body>
 
 </html>
